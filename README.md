@@ -20,38 +20,31 @@ $ ansible-galaxy install -r requirements.yml
 
 ### Usage
 
-A good point with Vagrant is that you can create, update and destroy all architecture easily with some commands.
-
-Be aware that you need to be in the Vagrant directory to be able to run the commands.
-
 #### Deployment
 
-To deploy ArgoCd on Vagrant instances, just run this command :
+To deploy ArgoCd on Kubernetes instances, just run this command :
 
 ```bash
-$ vagrant up
+$ ansible-playbook argocd.yml
 ```
 
-If everything run as expected, you should be able to list the virtual machine created :
-
-```bash
-$ vagrant status
-
-Current machine states:
-
-neuvector01                   running (virtualbox)
-```
-
-If everything run has expected, you should access :
-*   The NeuVector Docs interface : http://10.0.4.81/
-*   The NeuVector Console interface : https://10.0.4.81:8443/
+If everything run has expected, you should access ArgoCD dashboard depending on the Kubernetes port attribution.
 
 #### Destroy
 
-To destroy the Vagrant resources created, just run this command :
+To destroy the ArgoCD resources created, just follow these steps :
+
+```yaml
+# First change the default Ansible variable in the roles/argocd/defaults/main.yml file
+
+# Action
+argocd_action: absent
+```
+
+Save the change and run the Ansible playbook :
 
 ```bash
-$ vagrant destroy
+$ ansible-playbook argocd.yml
 ```
 
 ## Author
