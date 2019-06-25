@@ -1,0 +1,25 @@
+---
+
+- name: ARGOCD INSTALL | Deploy namespace
+  import_tasks: namespace.yml
+
+- name: ARGOCD INSTALL | Deploy Kubernetes objects
+  import_tasks: kubernetes.yml
+
+- name: ARGOCD INSTALL | Patch WebUI service
+  shell: "kubectl patch svc argocd-server -n {{ argocd_k8s_namespace }} -p '{\"spec\": {\"type\": \"{{ argocd_k8s_service_type }}\"}}'"
+  run_once: yes
+
+- name: ARGOCD INSTALL | Download command line tool
+  get_url:
+    url: "{{ argocd_cli_url }}"
+    dest: "{{ argocd_cli_path }}"
+    owner: root
+    group: root
+    mode: 0755
+
+# - name: ARGOCD INSTALL | Manage admin user
+#   import_tasks: users.yml
+
+- name: ARGOCD INSTALL | Manage registries
+  import_tasks: registries.yml

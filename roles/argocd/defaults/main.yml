@@ -1,0 +1,31 @@
+---
+
+###
+# ARGOCD
+###
+
+# Action
+argocd_action: present # Value : present / absent
+
+# Namespace
+argocd_k8s_namespace: argocd
+
+# Service
+argocd_k8s_service_type: LoadBalancer
+
+# CLI
+argocd_cli_version: 1.0.2
+argocd_cli_url : https://github.com/argoproj/argo-cd/releases/download/v{{ argocd_cli_version }}/argocd-linux-amd64
+argocd_cli_path: /usr/local/bin/argocd
+
+# User
+argocd_admin_name: admin
+argocd_current_admin_password: ""
+argocd_new_admin_password: HEZIEBPBSDKbzebo # CAUTION : Encrypt the password with vault
+
+# Registries
+argocd_registries:
+  - repo: https://github.com/argoproj/argocd-example-apps.git
+    path: guestbook
+    dest_server: https://kubernetes.default.svc
+    dest_namespace: default

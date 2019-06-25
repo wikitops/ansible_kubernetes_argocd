@@ -1,0 +1,3 @@
+- src: git+https://github.com/wikitops/ansible_pip
+  version: "1.4"
+  name: pip

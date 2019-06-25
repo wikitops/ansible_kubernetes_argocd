@@ -1,0 +1,3 @@
+inventory/hosts
+*.pyc
+__pycache*

@@ -1,0 +1,12 @@
+---
+
+- name: ARGOCD UNINSTALL | Delete Kubernetes objects
+  import_tasks: kubernetes.yml
+
+- name: ARGOCD UNINSTALL | Delete namespace
+  import_tasks: namespace.yml
+
+- name: ARGOCD UNINSTALL | Delete command line tool
+  file:
+    path: "{{ argocd_cli_path }}"
+    state: absent

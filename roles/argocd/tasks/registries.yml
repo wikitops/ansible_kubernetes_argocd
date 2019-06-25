@@ -1,0 +1,11 @@
+---
+
+- name: ARGOCD REGISTRIES | Add defined registries
+  shell: argocd app create guestbook --repo {{ item.repo }} --path {{ item.path }} --dest-server {{ item.dest_server }} --dest-namespace {{ item.dest_namespace }}
+  with_items: "{{ argocd_registries }}"
+  run_once: yes
+
+- name: ARGOCD REGISTRIES | Sync defined registries
+  shell: argocd app sync {{ item.path }}
+  with_items: "{{ argocd_registries }}"
+  run_once: yes

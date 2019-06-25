@@ -1,0 +1,30 @@
+---
+
+- run_once: yes
+  block:
+    - name: ARGOCD USERS | Fetch ArgoCD HTTPS Kubernetes nodePort
+      shell: kubectl get svc -n {{ argocd_k8s_namespace }} argocd-server -o=jsonpath='{.spec.ports[?(@.port==443)].nodePort}'
+      register: argocd_k8s_https_nodeport
+
+    - name: ARGOCD USERS | Ensure service is up and running
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ argocd_k8s_https_nodeport.stdout }}"
+        delay: 2
+
+    - name: ARGOCD USERS | Fetch ArgoCD server pod name
+      shell: kubectl get po -n {{ argocd_k8s_namespace }} -l app.kubernetes.io/name=argocd-server -o jsonpath={.items[*].metadata.name}
+      register: argocd_k8s_pod_name
+
+    - name: ARGOCD USERS | Set ArgoCD password fact
+      set_fact:
+        argocd_current_admin_password: "{{ argocd_k8s_pod_name.stdout }}"
+      when: argocd_status.stdout == "0" and argocd_current_admin_password == ""
+
+    - name: ARGOCD USERS | Log into ArgoCD with CLI
+      shell: argocd login {{ ansible_host }}:{{ argocd_k8s_https_nodeport.stdout }} --username {{ argocd_admin_name }} --password {{ argocd_current_admin_password }} --insecure
+      run_once: yes
+
+    - name: ARGOCD USERS | Manage ArgoCD Admin password
+      shell: argocd account update-password --current-password {{ argocd_current_admin_password }} --new-password {{ argocd_new_admin_password }} --insecure
+      run_once: yes
